@@ -1,12 +1,9 @@
 import Experience from "../Experience"
 import * as d3 from 'd3'
 import Point from "../util/Point"
-import { range, thresholdScott } from "d3"
 
 export default class SquigglyLine
 {
-    //Point startPoint
-    //Point endPoint
     constructor(startPoint, endPoint, totalPoints, wiggleRange, wiggleSpeed)
     {
         this.experience = new Experience()
@@ -20,7 +17,6 @@ export default class SquigglyLine
         this.draw()
     }
 
-    //u//pdate(this.startPoint)
 
     draw()
     {
@@ -67,39 +63,56 @@ export default class SquigglyLine
         return new Point(x, y)
     }
 
-    //Ended up hard coding perp. lines so fix when you feel like making the code better
+    _getLinePerpendicular(point, rateOfChange)
+    {
+        const line =
+        {
+            start: null,
+            end: null
+        }
+
+        if(rateOfChange.x == 0)
+        {
+            line.start = new Point(point.x - (this.wiggleRange/2), point.y)
+            line.end = new Point(point.x + (this.wiggleRange/2), point.y)
+        }
+        else if(rateOfChange.y == 0)
+        {
+            line.start = new Point(point.x, point.y - (this.wiggleRange/2))
+            line.end = new Point(point.x, point.y + (this.wiggleRange/2))
+        }
+        else
+        {
+            // Implement if ever needed lol.
+        }
+
+        return line
+    }
+
     _getRandomPoints()
     {
         let data = []
-        let xLength = (this.endPoint.x - this.startPoint.x) 
-        let yLength = (this.endPoint.y - this.startPoint.y)
 
-        let changeX = xLength / (this.totalPoints - 1)
-        let changeY = yLength / (this.totalPoints - 1)
-        let slope = xLength/yLength
-        
+        const length = {
+            x: this.endPoint.x - this.startPoint.x,
+            y: this.endPoint.y - this.startPoint.y
+        }
+
+        const rateOfChange = {
+            x: length.x / (this.totalPoints - 1),
+            y: length.y / (this.totalPoints - 1)      
+        }
+
         
         for(let i = 0; i < this.totalPoints; i++)
         {
-            let x = this.startPoint.x + (i * changeX)
-            let y = this.startPoint.y + (i * changeY)
-            let point = null
+            let squigglePoint = new Point(this.startPoint.x + (i * rateOfChange.x), this.startPoint.y + (i * rateOfChange.y))
+
+            // Get a point perpendicular to full line at point        
+            let perpendicularLine = this._getLinePerpendicular(squigglePoint, rateOfChange)       
+            let squiggleLocation = this._getRandomPointOnLine(perpendicularLine.start, perpendicularLine.end) 
             
-            if(changeX == 0)
-            {
-                let point1 = new Point(x - (this.wiggleRange/2), y)
-                let point2 = new Point(x + (this.wiggleRange/2), y)
-                
-                point = this._getRandomPointOnLine(point1, point2)
-            }
-            else if(changeY == 0)
-            {
-                let point1 = new Point(x, y - (this.wiggleRange/2))
-                let point2 = new Point(x, y + (this.wiggleRange/2))
-                point = this._getRandomPointOnLine(point1, point2)
-            }
-            
-            data.push([point.x, point.y])
+            data.push([squiggleLocation.x, squiggleLocation.y])
         }
         return data
     }

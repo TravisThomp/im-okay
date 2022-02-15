@@ -85,7 +85,6 @@ export default class Grid
                             this._wiggleSpeed)
             this._xAxisLines.push(line)
         }
-        //new SquigglyLine(new Point(0, 100), new Point(this.experience.sizes.width, 100), 10, 10)
         let yAxisLines = 1/this.experience.sizes.aspectRatio *  this.xAxisLines 
         let yStart = yAxisLines % 1 / 2
         for(let i = 0; i < yAxisLines; i++)

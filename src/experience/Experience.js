@@ -1,7 +1,5 @@
 import * as d3 from 'd3'
-import SquigglyLine from './background/SquigglyLine.js'
 import Sizes from './util/Sizes.js'
-import Point from './util/Point.js'
 import ClickableText from './ClickableText.js'
 import Grid from './background/Grid.js'
 
@@ -22,7 +20,6 @@ export default class Experience
 
         this.sizes.on('resize', () => {this.onResize()})
         this.grid = new Grid(18)
-        //new SquigglyLine(new Point(100, 0), new Point(100, this.sizes.height), 100, 10, 1000)
 
         this.text = new ClickableText('i\'m okay.', 90)
         this.text.on('click', () => {this.onTextClick()})
